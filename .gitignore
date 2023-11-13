@@ -3,3 +3,6 @@
 
 # local env files
 /backend/config/config.env
+
+# user uploaded files
+public/uploads/*

@@ -3,6 +3,10 @@ const { loginUser, signupUser, logoutUser, followUser, updateProfile, updatePass
 const { isAuthenticated } = require('../middlewares/auth');
 const path = require('path');
 const multer = require('multer');
+const { PrivacyPalClient } = require('privacy-pal');
+const { MongoClient, ObjectId } = require('mongodb');
+const { default: handleAccess } = require('../privacy/access');
+const jwt = require('jsonwebtoken');
 
 const router = express();
 
@@ -42,5 +46,32 @@ router.route("/update/password").put(isAuthenticated, updatePassword);
 
 router.route('/password/forgot').post(forgotPassword);
 router.route('/password/reset/:token').put(resetPassword);
+
+router.route("/data").get(isAuthenticated, async (req, res) => {
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
+    await mongoClient.connect();
+    const privacyPalClient = new PrivacyPalClient(mongoClient);
+
+    const { token } = req.cookies;
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+
+    const userLocator = {
+        dataType: 'user',
+        singleDocument: true,
+        collection: "users",
+        filter: {
+            _id: new ObjectId(decodedData.id)
+        }
+    }
+
+    const data = await privacyPalClient.processAccessRequest(handleAccess, userLocator, decodedData.id);
+    console.log(data)
+
+    res.json({
+        success: true,
+        data: JSON.stringify(data)
+    })
+});
+
 
 module.exports = router;
