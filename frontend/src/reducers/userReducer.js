@@ -240,7 +240,7 @@ export const privacyReducer = (state = {}, { type, payload }) => {
             return {
                 ...state,
                 loading: false,
-                data: payload,
+                data: JSON.parse(payload.data),
             };
         case DATA_ACCESS_FAIL:
             return {

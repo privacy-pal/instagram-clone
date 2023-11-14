@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { BASE_PROFILE_IMAGE_URL } from '../../../utils/constants';
 import MetaData from '../../Layouts/MetaData';
 import { clearErrors, getPrivacyData } from '../../../actions/userAction';
-// import exportFromJSON from 'export-from-json';
+import exportFromJSON from 'export-from-json';
 
 const PrivacyAndSecurity = () => {
     const [username, setUsername] = useState("");
@@ -33,20 +33,11 @@ const PrivacyAndSecurity = () => {
                 toast.error(privacyError);
                 dispatch(clearErrors());
             } else if (data) {
-                console.log(data)
                 dispatch(clearErrors());
-                // const exportType = exportFromJSON.types.json
-                // const fileName = username + "_privacy_data"
-                // exportFromJSON({ privacyData, fileName, exportType })
-                //     .then(() => {
-                //         toast.success("Downloaded successfully");
-                //     })
-                //     .catch(() => {
-                //         toast.error("Failed to download");
-                //     })
-                //     .finally(() => {
-                //         dispatch(clearErrors());
-                //     })
+                const exportType = exportFromJSON.types.json
+                const fileName = username + "_privacy_data"
+                exportFromJSON({ data, fileName, exportType })
+                dispatch(clearErrors());
             }
         }
     }, [dispatch, loading, data, privacyError]);
