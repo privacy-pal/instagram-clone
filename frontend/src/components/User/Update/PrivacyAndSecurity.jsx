@@ -5,6 +5,7 @@ import { BASE_PROFILE_IMAGE_URL } from '../../../utils/constants';
 import MetaData from '../../Layouts/MetaData';
 import { clearErrors, getPrivacyData } from '../../../actions/userAction';
 import exportFromJSON from 'export-from-json';
+import MoonLoader from "react-spinners/MoonLoader";
 
 const PrivacyAndSecurity = () => {
     const [username, setUsername] = useState("");
@@ -61,11 +62,19 @@ const PrivacyAndSecurity = () => {
                 <div className="flex w-full gap-8 text-right items-center">
                     <span style={{ marginLeft: "4px" }} />
                     <button
-                        className="border rounded p-1 w-3/4 hover:bg-gray-50"
+                        className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
                         onClick={handleRequestPrivacyData}
+                        disabled={loading}
                     >
                         Download your information
                     </button>
+                    <MoonLoader
+                        color={"#000000"}
+                        loading={loading ? 1 : 0}
+                        size={20}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
                 </div>
             </div>
         </>
