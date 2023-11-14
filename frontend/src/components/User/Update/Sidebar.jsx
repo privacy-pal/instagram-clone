@@ -11,6 +11,10 @@ const tabs = [
         nav: "/accounts/password/change"
     },
     {
+        title: "Privacy and Security",
+        nav: "/accounts/privacy"
+    },
+    {
         title: "Apps and Websites",
         nav: "/accounts/edit"
     },
@@ -24,10 +28,6 @@ const tabs = [
     },
     {
         title: "Manage Contacts",
-        nav: "/accounts/edit"
-    },
-    {
-        title: "Privacy and Security",
         nav: "/accounts/edit"
     },
     {

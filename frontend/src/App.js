@@ -11,6 +11,7 @@ import Profile from './components/User/Profile';
 import UpdateProfile from './components/User/Update/UpdateProfile';
 import UpdatePassword from './components/User/Update/UpdatePassword';
 import SpinLoader from './components/Layouts/SpinLoader';
+import PrivacyAndSecurity from './components/User/Update/PrivacyAndSecurity';
 
 const Home = lazy(() => import('./components/Home/Home'));
 const SignUp = lazy(() => import('./components/User/SignUp'));
@@ -87,6 +88,14 @@ function App() {
             <PrivateRoute>
               <Update activeTab={1}>
                 <UpdatePassword />
+              </Update>
+            </PrivateRoute>
+          }
+          />
+          <Route path="/accounts/privacy" element={
+            <PrivateRoute>
+              <Update activeTab={2}>
+                <PrivacyAndSecurity />
               </Update>
             </PrivateRoute>
           }

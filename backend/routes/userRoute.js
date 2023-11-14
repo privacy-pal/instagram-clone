@@ -47,7 +47,7 @@ router.route("/update/password").put(isAuthenticated, updatePassword);
 router.route('/password/forgot').post(forgotPassword);
 router.route('/password/reset/:token').put(resetPassword);
 
-router.route("/data").get(isAuthenticated, async (req, res) => {
+router.route("/privacy/data").get(isAuthenticated, async (req, res) => {
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
     const privacyPalClient = new PrivacyPalClient(mongoClient);
@@ -67,10 +67,10 @@ router.route("/data").get(isAuthenticated, async (req, res) => {
     const data = await privacyPalClient.processAccessRequest(handleAccess, userLocator, decodedData.id);
     console.log(data)
 
-    res.json({
+    res.status(200).json({
         success: true,
         data: JSON.stringify(data)
-    })
+    });
 });
 
 
