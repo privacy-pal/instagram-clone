@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { BASE_PROFILE_IMAGE_URL } from '../../../utils/constants';
 import MetaData from '../../Layouts/MetaData';
@@ -8,37 +7,33 @@ import { clearErrors, getPrivacyData } from '../../../actions/userAction';
 // import exportFromJSON from 'export-from-json';
 
 const PrivacyAndSecurity = () => {
-    const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const { user } = useSelector((state) => state.user);
-    const { error, loading } = useSelector((state) => state.profile);
-    const { privacyLoading, privacyError, privacyData } = useSelector((state) => state.privacy);
+    const { error: profileError } = useSelector((state) => state.profile);
+    const { loading, error: privacyError, data } = useSelector((state) => state.privacy);
 
     useEffect(() => {
         if (user) {
-            setName(user.name);
             setUsername(user.username);
             setAvatar(user.avatar);
         }
-        if (error) {
-            toast.error(error);
+        if (profileError) {
+            toast.error(profileError);
             dispatch(clearErrors());
         }
-    }, [dispatch, user, error]);
+    }, [dispatch, user, profileError]);
 
     useEffect(() => {
-        console.log(privacyLoading, privacyData, privacyError)
-        if (!privacyLoading) {
+        if (!loading) {
             if (privacyError) {
                 toast.error(privacyError);
                 dispatch(clearErrors());
-            } else if (privacyData) {
-                console.log(privacyData)
+            } else if (data) {
+                console.log(data)
                 dispatch(clearErrors());
                 // const exportType = exportFromJSON.types.json
                 // const fileName = username + "_privacy_data"
@@ -54,7 +49,7 @@ const PrivacyAndSecurity = () => {
                 //     })
             }
         }
-    }, [privacyLoading, privacyData, privacyError]);
+    }, [dispatch, loading, data, privacyError]);
 
     const handleRequestPrivacyData = () => {
         dispatch(getPrivacyData());
