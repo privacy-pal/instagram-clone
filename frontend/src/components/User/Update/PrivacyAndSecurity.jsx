@@ -74,6 +74,7 @@ const PrivacyAndSecurity = () => {
                         size={20}
                         aria-label="Loading Spinner"
                         data-testid="loader"
+                        speedMultiplier={0.65}
                     />
                 </div>
             </div>
