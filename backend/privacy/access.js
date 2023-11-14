@@ -43,7 +43,7 @@ function handleAccessUser(dataSubjectId, locator, obj) {
             singleDocument: true,
             collection: "posts",
             filter: {
-                _id: new mongodb_1.ObjectId(postId)
+                _id: postId
             },
             context: { postType: "saved" }
         }); }),
@@ -52,7 +52,7 @@ function handleAccessUser(dataSubjectId, locator, obj) {
             singleDocument: true,
             collection: "users",
             filter: {
-                _id: new mongodb_1.ObjectId(userId)
+                _id: userId
             },
             context: { userType: "follower" }
         }); }),
@@ -61,7 +61,7 @@ function handleAccessUser(dataSubjectId, locator, obj) {
             singleDocument: true,
             collection: "users",
             filter: {
-                _id: new mongodb_1.ObjectId(userId)
+                _id: userId
             },
             context: { userType: "following" }
         }); }),
