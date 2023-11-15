@@ -51,7 +51,7 @@ router.route('/password/reset/:token').put(resetPassword);
 router.route("/privacy/data").get(isAuthenticated, async (req, res) => {
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
-    const privacyPalClient = new PrivacyPalClient(mongoClient);
+    const privacyPalClient = new PrivacyPalClient(mongoClient, mongoClient.db());
 
     const { token } = req.cookies;
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
@@ -78,7 +78,7 @@ router.route("/privacy/data").get(isAuthenticated, async (req, res) => {
 router.route("/privacy/data").delete(isAuthenticated, async (req, res) => {
     const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
-    const privacyPalClient = new PrivacyPalClient(mongoClient);
+    const privacyPalClient = new PrivacyPalClient(mongoClient, mongoClient.db());
 
     const { token } = req.cookies;
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
@@ -92,13 +92,16 @@ router.route("/privacy/data").delete(isAuthenticated, async (req, res) => {
         }
     }
 
-    await privacyPalClient.processDeletionRequest(handleDeletion, userLocator, decodedData.id, false);
+    const deletionRes = await privacyPalClient.processDeletionRequest(handleDeletion, userLocator, decodedData.id, true);
 
     // TODO: should make sure that all data relevant to the user got deleted before returning success.
     await mongoClient.close();
+
+    console.log(deletionRes);
+
     res.status(200).json({
         success: true,
-        data: "User data deleted successfully"
+        data: deletionRes
     });
 })
 

@@ -60,6 +60,18 @@ function handleDeletionUser(dataSubjectId, locator, obj) {
                 context: { savedBy: obj._id }
             },
             {
+                dataType: "post",
+                singleDocument: false,
+                collection: "posts",
+                filter: {
+                    $or: [
+                        { "likes": obj._id },
+                        { "comments.user": obj._id }
+                    ]
+                },
+                context: { likedOrCommentedBy: obj._id }
+            },
+            {
                 dataType: "user",
                 singleDocument: false,
                 collection: "users",
@@ -99,9 +111,8 @@ function handleDeletionUser(dataSubjectId, locator, obj) {
     };
 }
 function handleDeletionPost(dataSubjectId, locator, obj) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     if (((_a = locator.context.postedBy) === null || _a === void 0 ? void 0 : _a.toString()) === dataSubjectId) {
-        console.log("here");
         // if the post is posted by the data subject, delete it
         return {
             nodesToTraverse: (_b = obj.savedBy) === null || _b === void 0 ? void 0 : _b.map(function (userId) { return ({
@@ -116,17 +127,34 @@ function handleDeletionPost(dataSubjectId, locator, obj) {
             deleteNode: true,
         };
     }
-    else if (((_c = locator.context.savedBy) === null || _c === void 0 ? void 0 : _c.toString()) === dataSubjectId) {
-        // if the post is saved by the data subject, remove it from the savedBy array
-        return {
-            nodesToTraverse: [],
-            deleteNode: false,
-            fieldsToUpdate: {
-                $pull: {
-                    savedBy: new mongodb_1.ObjectId(dataSubjectId)
+    else {
+        if (((_c = locator.context.savedBy) === null || _c === void 0 ? void 0 : _c.toString()) === dataSubjectId) {
+            // if the post is saved by the data subject, remove it from the savedBy array
+            return {
+                nodesToTraverse: [],
+                deleteNode: false,
+                fieldsToUpdate: {
+                    $pull: {
+                        savedBy: new mongodb_1.ObjectId(dataSubjectId)
+                    }
                 }
-            }
-        };
+            };
+        }
+        if (((_d = locator.context.likedOrCommentedBy) === null || _d === void 0 ? void 0 : _d.toString()) === dataSubjectId) {
+            // if the post is liked or commented by the data subject, remove it from the likes and comments
+            return {
+                nodesToTraverse: [],
+                deleteNode: false,
+                fieldsToUpdate: {
+                    $pull: {
+                        likes: new mongodb_1.ObjectId(dataSubjectId),
+                        comments: {
+                            user: new mongodb_1.ObjectId(dataSubjectId)
+                        }
+                    }
+                }
+            };
+        }
     }
     return {
         nodesToTraverse: [],
