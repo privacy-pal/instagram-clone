@@ -27,8 +27,8 @@ function handleAccessUser(dataSubjectId, locator, obj) {
         username: obj.username,
         password: obj.password,
         avatar: obj.avatar,
-        bio: obj.bio,
-        website: obj.website,
+        bio: obj.bio ? obj.bio : "",
+        website: obj.website ? obj.website : "",
         posts: obj.posts.map(function (postId) { return ({
             dataType: "post",
             singleDocument: true,

@@ -26,8 +26,8 @@ function handleAccessUser(dataSubjectId: string, locator: MongoLocator, obj: any
         username: obj.username,
         password: obj.password,
         avatar: obj.avatar,
-        bio: obj.bio,
-        website: obj.website,
+        bio: obj.bio ? obj.bio : "",
+        website: obj.website ? obj.website : "",
         posts: obj.posts.map((postId: ObjectId): MongoLocator => ({
             dataType: "post",
             singleDocument: true,

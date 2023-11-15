@@ -6,6 +6,7 @@ const multer = require('multer');
 const { PrivacyPalClient } = require('privacy-pal');
 const { MongoClient, ObjectId } = require('mongodb');
 const { default: handleAccess } = require('../privacy/access');
+const { default: handleDeletion } = require('../privacy/deletion');
 const jwt = require('jsonwebtoken');
 
 const router = express();
@@ -67,11 +68,38 @@ router.route("/privacy/data").get(isAuthenticated, async (req, res) => {
     const data = await privacyPalClient.processAccessRequest(handleAccess, userLocator, decodedData.id);
     console.log(data)
 
+    await mongoClient.close();
     res.status(200).json({
         success: true,
         data: JSON.stringify(data)
     });
 });
 
+router.route("/privacy/data").delete(isAuthenticated, async (req, res) => {
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
+    await mongoClient.connect();
+    const privacyPalClient = new PrivacyPalClient(mongoClient);
+
+    const { token } = req.cookies;
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+
+    const userLocator = {
+        dataType: 'user',
+        singleDocument: true,
+        collection: "users",
+        filter: {
+            _id: new ObjectId(decodedData.id)
+        }
+    }
+
+    await privacyPalClient.processDeletionRequest(handleDeletion, userLocator, decodedData.id, false);
+
+    // TODO: should make sure that all data relevant to the user got deleted before returning success.
+    await mongoClient.close();
+    res.status(200).json({
+        success: true,
+        data: "User data deleted successfully"
+    });
+})
 
 module.exports = router;
