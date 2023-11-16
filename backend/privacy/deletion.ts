@@ -114,8 +114,7 @@ function handleDeletionUser(dataSubjectId: string, locator: MongoLocator, obj: a
                 }
             }
         ],
-        // deleteNode: true,
-        deleteNode: false,
+        deleteNode: true,
     }
 
 }
