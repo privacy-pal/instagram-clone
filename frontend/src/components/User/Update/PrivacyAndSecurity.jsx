@@ -59,23 +59,42 @@ const PrivacyAndSecurity = () => {
                         <span className="text-xl">{username}</span>
                     </div>
                 </div>
-                <div className="flex w-full gap-8 text-right items-center">
-                    <span style={{ marginLeft: "4px" }} />
-                    <button
-                        className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
-                        onClick={handleRequestPrivacyData}
-                        disabled={loading}
-                    >
-                        Download your information
-                    </button>
-                    <MoonLoader
+                <div className="gap-8 items-center" style={{ marginLeft: 40, marginTop: 10 }}>
+                    <div className="flex w-full gap-8 text-right items-center">
+                        <button
+                            className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
+                            onClick={handleRequestPrivacyData}
+                            disabled={loading}
+                        >
+                            Download your information
+                        </button>
+                        <MoonLoader
+                            color={"#000000"}
+                            loading={loading ? 1 : 0}
+                            size={20}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                            speedMultiplier={0.65}
+                        />
+                    </div>
+                    <div style={{ marginTop: 10 }} />
+                    <div>
+                        <button
+                            className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
+                            onClick={handleRequestPrivacyData}
+                            disabled={loading}
+                        >
+                            Delete your account
+                        </button>
+                        {/* <MoonLoader
                         color={"#000000"}
                         loading={loading ? 1 : 0}
                         size={20}
                         aria-label="Loading Spinner"
                         data-testid="loader"
                         speedMultiplier={0.65}
-                    />
+                    /> */}
+                    </div>
                 </div>
             </div>
         </>

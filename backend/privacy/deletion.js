@@ -106,8 +106,7 @@ function handleDeletionUser(dataSubjectId, locator, obj) {
                 }
             }
         ],
-        // deleteNode: true,
-        deleteNode: false,
+        deleteNode: true,
     };
 }
 function handleDeletionPost(dataSubjectId, locator, obj) {
