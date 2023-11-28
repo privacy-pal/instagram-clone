@@ -1,21 +1,23 @@
+import exportFromJSON from 'export-from-json';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import MoonLoader from "react-spinners/MoonLoader";
 import { toast } from 'react-toastify';
+import { clearErrors, deletePrivacyData, getPrivacyData, logoutUser } from '../../../actions/userAction';
 import { BASE_PROFILE_IMAGE_URL } from '../../../utils/constants';
 import MetaData from '../../Layouts/MetaData';
-import { clearErrors, getPrivacyData } from '../../../actions/userAction';
-import exportFromJSON from 'export-from-json';
-import MoonLoader from "react-spinners/MoonLoader";
 
 const PrivacyAndSecurity = () => {
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { user } = useSelector((state) => state.user);
     const { error: profileError } = useSelector((state) => state.profile);
-    const { loading, error: privacyError, data } = useSelector((state) => state.privacy);
+    const { loading, error: privacyError, data, accountDeleted } = useSelector((state) => state.privacy);
 
     useEffect(() => {
         if (user) {
@@ -43,8 +45,20 @@ const PrivacyAndSecurity = () => {
         }
     }, [dispatch, loading, data, privacyError]);
 
+    useEffect(() => {
+        if (accountDeleted) {
+            dispatch(logoutUser());
+            navigate("/login");
+            toast.success("Account Deleted Successfully");
+        }
+    }, [accountDeleted, navigate]);
+
     const handleRequestPrivacyData = () => {
         dispatch(getPrivacyData());
+    }
+
+    const handleDeletePrivacyData = () => {
+        dispatch(deletePrivacyData());
     }
 
     return (
@@ -81,7 +95,7 @@ const PrivacyAndSecurity = () => {
                     <div>
                         <button
                             className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
-                            onClick={handleRequestPrivacyData}
+                            onClick={handleDeletePrivacyData}
                             disabled={loading}
                         >
                             Delete your account
