@@ -1,4 +1,5 @@
 import exportFromJSON from 'export-from-json';
+import Dialog from '@mui/material/Dialog';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,10 +8,16 @@ import { toast } from 'react-toastify';
 import { clearErrors, deletePrivacyData, getPrivacyData, logoutUser } from '../../../actions/userAction';
 import { BASE_PROFILE_IMAGE_URL } from '../../../utils/constants';
 import MetaData from '../../Layouts/MetaData';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 const PrivacyAndSecurity = () => {
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
+    const [confirmDeletionDialog, setConfirmDeletionDialog] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -58,11 +65,31 @@ const PrivacyAndSecurity = () => {
     }
 
     const handleDeletePrivacyData = () => {
+        setConfirmDeletionDialog(false);
         dispatch(deletePrivacyData());
+    }
+
+    const handleCloseDialog = () => {
+        setConfirmDeletionDialog(false);
     }
 
     return (
         <>
+            <Dialog open={confirmDeletionDialog} onClose={handleCloseDialog}>
+                <DialogTitle>
+                    Are you sure you want to delete your account?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        This will delete all your data and cannot be undone. You will be automatically logged out.
+                        If you want a copy of your data, please download it before deleting your account.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handleDeletePrivacyData} autoFocus>Confirm</Button>
+                </DialogActions>
+            </Dialog>
             <MetaData title="Privacy and Security" />
             <div className="flex flex-col gap-4 py-4 px-4 sm:py-10 sm:px-24 sm:w-3/4">
                 <div className="flex items-center gap-8 ml-20">
@@ -72,8 +99,16 @@ const PrivacyAndSecurity = () => {
                     <div className="flex flex-col gap-0">
                         <span className="text-xl">{username}</span>
                     </div>
+                    <MoonLoader
+                        color={"#000000"}
+                        loading={loading ? 1 : 0}
+                        size={20}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                        speedMultiplier={0.65}
+                    />
                 </div>
-                <div className="gap-8 items-center" style={{ marginLeft: 40, marginTop: 10 }}>
+                <div className="gap-8 items-center" style={{ marginLeft: 60, marginTop: 10 }}>
                     <div className="flex w-full gap-8 text-right items-center">
                         <button
                             className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
@@ -82,32 +117,16 @@ const PrivacyAndSecurity = () => {
                         >
                             Download your information
                         </button>
-                        <MoonLoader
-                            color={"#000000"}
-                            loading={loading ? 1 : 0}
-                            size={20}
-                            aria-label="Loading Spinner"
-                            data-testid="loader"
-                            speedMultiplier={0.65}
-                        />
                     </div>
                     <div style={{ marginTop: 10 }} />
                     <div>
                         <button
                             className={`border rounded p-1 w-3/4 ${loading ? "text-gray-400" : "hover:bg-gray-50"}`}
-                            onClick={handleDeletePrivacyData}
+                            onClick={() => { setConfirmDeletionDialog(true) }}
                             disabled={loading}
                         >
                             Delete your account
                         </button>
-                        {/* <MoonLoader
-                        color={"#000000"}
-                        loading={loading ? 1 : 0}
-                        size={20}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                        speedMultiplier={0.65}
-                    /> */}
                     </div>
                 </div>
             </div>
