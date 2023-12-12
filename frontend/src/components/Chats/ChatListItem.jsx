@@ -25,21 +25,23 @@ const ChatListItem = ({ _id, users, latestMessage }) => {
     }, []);
 
     useEffect(() => {
-        socket.current.on("getUsers", users => {
-            // console.log(users);
-            setIsOnline(users.some((u) => u.userId === friend._id));
-        })
-    }, [friend._id])
+        if (friend._id) {
+            socket.current.on("getUsers", users => {
+                // console.log(users);
+                setIsOnline(users.some((u) => u.userId === friend._id));
+            })
+        }
+    }, [friend])
 
     return (
         <Link to={`/direct/t/${_id}/${friend._id}`} className={`${params.chatId === _id && 'bg-gray-100'} flex gap-3 items-center py-2 px-4 cursor-pointer hover:bg-gray-100`}>
             <div className="w-14 h-14 relative">
-                <img draggable="false" className="w-full h-full rounded-full object-cover" src={BASE_PROFILE_IMAGE_URL + friend.avatar} alt="avatar" />
+                <img draggable="false" className="w-full h-full rounded-full object-cover" src={friend.avatar ? BASE_PROFILE_IMAGE_URL + friend.avatar : "https://newportmed.com/wp-content/uploads/2020/11/default.jpg"} alt="avatar" />
                 {isOnline && <div className="absolute right-0 bottom-0.5 h-3 w-3 bg-green-500 rounded-full"></div>}
             </div>
             <div className="flex flex-col items-start">
-                <span className="text-sm">{friend.name}</span>
-                <span className="text-sm truncate w-36 text-gray-400">{latestMessage?.content}</span>
+                <span className="text-sm">{friend._id ? friend.name : "User does not exist"}</span>
+                <span className="text-sm truncate w-36 text-gray-400">{latestMessage?.content ? latestMessage.content : "Message deleted"}</span>
             </div>
         </Link>
     )

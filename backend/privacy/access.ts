@@ -64,6 +64,14 @@ function handleAccessUser(dataSubjectId: string, locator: MongoLocator, obj: any
             },
             context: { userType: "following" }
         })),
+        chats: {
+            dataType: "chat",
+            singleDocument: false,
+            collection: "chats",
+            filter: {
+                users: new ObjectId(dataSubjectId)
+            }
+        }
     }
 }
 
@@ -105,9 +113,20 @@ function handleAccessPost(dataSubjectId: string, locator: MongoLocator, obj: any
 }
 
 function handleAccessMessage(dataSubjectId: string, locator: MongoLocator, obj: any): Record<string, any> {
-    return {}
+    return {
+        content: obj.content,
+    }
 }
 
 function handleAccessChat(dataSubjectId: string, locator: MongoLocator, obj: any): Record<string, any> {
-    return {}
+    return {
+        messages: {
+            dataType: "message",
+            singleDocument: false,
+            collection: "messages",
+            filter: {
+                sender: new ObjectId(dataSubjectId),
+            }
+        }
+    }
 }

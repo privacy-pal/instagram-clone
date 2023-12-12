@@ -110,7 +110,10 @@ router.route("/privacy/data").delete(isAuthenticated, async (req, res) => {
             message: deletionRes,
         });
     } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 })
 

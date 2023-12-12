@@ -185,10 +185,11 @@ const Inbox = () => {
                             <div className="flex py-3 px-6 border-b items-center justify-between">
                                 <div className="flex gap-2 items-center">
                                     <div className="w-8 h-8 relative">
-                                        <img draggable="false" loading="lazy" className="w-full h-full rounded-full object-cover" src={BASE_PROFILE_IMAGE_URL + friend.avatar} alt="avatar" />
+
+                                        <img draggable="false" loading="lazy" className="w-full h-full rounded-full object-cover" src={friend ? BASE_PROFILE_IMAGE_URL + friend.avatar : "https://newportmed.com/wp-content/uploads/2020/11/default.jpg"} alt="avatar" />
                                         {isOnline && <div className="absolute -right-0.5 -bottom-0.5 h-3 w-3 bg-green-500 rounded-full"></div>}
                                     </div>
-                                    <span className="font-medium cursor-pointer">{friend.name}</span>
+                                    <span className="font-medium cursor-pointer">{friend ? friend.name : "Account Deleted"}</span>
                                 </div>
                                 <svg className="cursor-pointer" aria-label="View Thread Details" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></circle><circle cx="11.819" cy="7.709" r="1.25"></circle><line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="10.569" x2="13.432" y1="16.777" y2="16.777"></line><polyline fill="none" points="10.569 11.05 12 11.05 12 16.777" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></polyline></svg>
                             </div>

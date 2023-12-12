@@ -275,6 +275,7 @@ export const privacyReducer = (state = {}, { type, payload }) => {
                 ...state,
                 error: null,
                 data: null,
+                accountDeleted: false,
             };
         default:
             return state;

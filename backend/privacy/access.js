@@ -65,6 +65,14 @@ function handleAccessUser(dataSubjectId, locator, obj) {
             },
             context: { userType: "following" }
         }); }),
+        chats: {
+            dataType: "chat",
+            singleDocument: false,
+            collection: "chats",
+            filter: {
+                users: new mongodb_1.ObjectId(dataSubjectId)
+            }
+        }
     };
 }
 function handleAccessPost(dataSubjectId, locator, obj) {
@@ -104,8 +112,19 @@ function handleAccessPost(dataSubjectId, locator, obj) {
     };
 }
 function handleAccessMessage(dataSubjectId, locator, obj) {
-    return {};
+    return {
+        content: obj.content,
+    };
 }
 function handleAccessChat(dataSubjectId, locator, obj) {
-    return {};
+    return {
+        messages: {
+            dataType: "message",
+            singleDocument: false,
+            collection: "messages",
+            filter: {
+                sender: new mongodb_1.ObjectId(dataSubjectId),
+            }
+        }
+    };
 }

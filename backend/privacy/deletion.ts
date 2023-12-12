@@ -6,6 +6,8 @@ export default function handleDeletion(dataSubjectId: string, locator: MongoLoca
     deleteNode: boolean,
     fieldsToUpdate?: UpdateFilter<any> | Partial<any>
 } {
+    console.log(locator)
+    console.log(obj)
     switch (locator.dataType) {
         case "user":
             return handleDeletionUser(dataSubjectId, locator, obj)
@@ -28,22 +30,30 @@ function handleDeletionUser(dataSubjectId: string, locator: MongoLocator, obj: a
     const thisUserId = obj._id.toString()
     if (thisUserId !== dataSubjectId) {
         let fieldsToUpdate: UpdateFilter<any> | Partial<any> = {}
-        if (locator.context.followedBy === dataSubjectId) {
+        if (locator.context.followedBy && locator.context.followedBy.toString() === dataSubjectId) {
             // if the user is followed by the data subject, remove data subject from his followers array
-            fieldsToUpdate.$pull = {
-                followers: new ObjectId(dataSubjectId)
+            fieldsToUpdate = {
+                $pull: {
+                    followers: new ObjectId(dataSubjectId)
+                }
             }
-        } else if (locator.context.follows === dataSubjectId) {
+        } else if (locator.context.follows && locator.context.follows.toString() === dataSubjectId) {
             // if the user follows the data subject, remove data subject from his following array
-            fieldsToUpdate.$pull = {
-                following: new ObjectId(dataSubjectId)
+            fieldsToUpdate = {
+                $pull: {
+                    following: new ObjectId(dataSubjectId)
+                }
             }
         }
         if (locator.context.savesDeletedPost !== undefined) {
             // if the user saves the deleted post, remove it from his saved array
-            fieldsToUpdate.$pull.saved = new ObjectId(locator.context.savesDeletedPost)
+            fieldsToUpdate = {
+                $pull: {
+                    saved: locator.context.savesDeletedPost
+                }
+            }
         }
-        return { nodesToTraverse: [], deleteNode: false, fieldsToUpdate }
+        return { nodesToTraverse: [], deleteNode: false, fieldsToUpdate: fieldsToUpdate }
     }
 
     // the user is the data subject
@@ -96,14 +106,6 @@ function handleDeletionUser(dataSubjectId: string, locator: MongoLocator, obj: a
                     following: obj._id
                 },
                 context: { follows: obj._id }
-            },
-            {
-                dataType: "message",
-                singleDocument: false,
-                collection: "messages",
-                filter: {
-                    sender: obj._id
-                },
             },
             {
                 dataType: "chat",
@@ -190,12 +192,19 @@ function handleDeletionChat(dataSubjectId: string, locator: MongoLocator, obj: a
     fieldsToUpdate?: UpdateFilter<any> | Partial<any>
 } {
     return {
-        nodesToTraverse: [],
+        nodesToTraverse: [{
+            dataType: "message",
+            singleDocument: false,
+            collection: "messages",
+            filter: {
+                sender: new ObjectId(dataSubjectId),
+            }
+        }],
         deleteNode: false,
         fieldsToUpdate: {
-            $pull: {
-                users: new ObjectId(dataSubjectId)
-            }
+            // $pull: {
+            //     users: new ObjectId(dataSubjectId)
+            // }
         }
     }
 }

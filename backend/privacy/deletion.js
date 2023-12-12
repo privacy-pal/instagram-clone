@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongodb_1 = require("mongodb");
 function handleDeletion(dataSubjectId, locator, obj) {
+    console.log(locator);
+    console.log(obj);
     switch (locator.dataType) {
         case "user":
             return handleDeletionUser(dataSubjectId, locator, obj);
@@ -20,21 +22,29 @@ function handleDeletionUser(dataSubjectId, locator, obj) {
     var thisUserId = obj._id.toString();
     if (thisUserId !== dataSubjectId) {
         var fieldsToUpdate = {};
-        if (locator.context.followedBy === dataSubjectId) {
+        if (locator.context.followedBy && locator.context.followedBy.toString() === dataSubjectId) {
             // if the user is followed by the data subject, remove data subject from his followers array
-            fieldsToUpdate.$pull = {
-                followers: new mongodb_1.ObjectId(dataSubjectId)
+            fieldsToUpdate = {
+                $pull: {
+                    followers: new mongodb_1.ObjectId(dataSubjectId)
+                }
             };
         }
-        else if (locator.context.follows === dataSubjectId) {
+        else if (locator.context.follows && locator.context.follows.toString() === dataSubjectId) {
             // if the user follows the data subject, remove data subject from his following array
-            fieldsToUpdate.$pull = {
-                following: new mongodb_1.ObjectId(dataSubjectId)
+            fieldsToUpdate = {
+                $pull: {
+                    following: new mongodb_1.ObjectId(dataSubjectId)
+                }
             };
         }
         if (locator.context.savesDeletedPost !== undefined) {
             // if the user saves the deleted post, remove it from his saved array
-            fieldsToUpdate.$pull.saved = new mongodb_1.ObjectId(locator.context.savesDeletedPost);
+            fieldsToUpdate = {
+                $pull: {
+                    saved: locator.context.savesDeletedPost
+                }
+            };
         }
         return { nodesToTraverse: [], deleteNode: false, fieldsToUpdate: fieldsToUpdate };
     }
@@ -88,14 +98,6 @@ function handleDeletionUser(dataSubjectId, locator, obj) {
                     following: obj._id
                 },
                 context: { follows: obj._id }
-            },
-            {
-                dataType: "message",
-                singleDocument: false,
-                collection: "messages",
-                filter: {
-                    sender: obj._id
-                },
             },
             {
                 dataType: "chat",
@@ -168,12 +170,19 @@ function handleDeletionMessage(dataSubjectId, locator, obj) {
 }
 function handleDeletionChat(dataSubjectId, locator, obj) {
     return {
-        nodesToTraverse: [],
+        nodesToTraverse: [{
+                dataType: "message",
+                singleDocument: false,
+                collection: "messages",
+                filter: {
+                    sender: new mongodb_1.ObjectId(dataSubjectId),
+                }
+            }],
         deleteNode: false,
         fieldsToUpdate: {
-            $pull: {
-                users: new mongodb_1.ObjectId(dataSubjectId)
-            }
+        // $pull: {
+        //     users: new ObjectId(dataSubjectId)
+        // }
         }
     };
 }
