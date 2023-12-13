@@ -76,7 +76,11 @@ router.route("/privacy/data").get(isAuthenticated, async (req, res) => {
             data: JSON.stringify(data)
         });
     } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 });
 
