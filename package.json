@@ -25,7 +25,7 @@
     "mongodb": "^6.2.0",
     "mongoose": "^6.1.7",
     "multer": "^1.4.4",
-    "privacy-pal": "^1.2.1",
+    "privacy-pal": "^1.2.2",
     "socket.io": "^4.4.1"
   }
 }
